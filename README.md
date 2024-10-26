@@ -81,7 +81,7 @@ To uninstall completely, run both commands in the [Stopping](#stopping)  section
 
 ```
 sudo rm /etc/systemd/system/moonraker_firewall.service
-sudo rm /usr/bin/moonraker_firewallmoonraker_firewall
+sudo rm /usr/bin/moonraker_firewall
 ```
 
 # Credits
