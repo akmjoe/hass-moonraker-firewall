@@ -1,0 +1,26 @@
+#!/bin/bash
+
+subnet='192.168.1.0/24'
+klippy='"klippy_state":"ready"' # String to search for in JSON response that indicates klipper is ready
+current=0 # Startup state unknown; 1=ready, 2=any other state
+
+while true; do # Loop constantly
+    connected=`curl -s http://127.0.0.1:7125/server/info -H "Accept: application/json" -m 5` # Get server status
+
+    if [[ "$connected" == *"$klippy"* ]]; then # Klipper is ready
+        echo "Klippy is ready"
+        if [[ "$current" -ne 1 ]]; then # Different state from last - change firewall
+            yes | ufw delete deny from 192.168.1.0/24 to any port 7125
+            ufw allow from 192.168.1.0/24 to any port 7125
+        fi
+        current=1 # Save state
+    else # Klipper not ready
+        echo "Klippy Shutdown/Not Ready"
+        if [[ "$current" -ne 2 ]]; then # Different state from last - change firewall
+            yes | ufw delete allow from "$subnet" to any port 7125
+            ufw deny from "$subnet" to any port 7125
+        fi
+        current=2 # Save state
+    fi
+    sleep 10 # Wait 10 seconds
+done

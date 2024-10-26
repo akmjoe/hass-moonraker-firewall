@@ -1,0 +1,13 @@
+[Unit]
+Description=Firewall moonraker when klipper is shutdown
+Documentation=
+Requires=network-online.target
+After=network-online.target
+
+[Service]
+User=root
+ExecStart=/usr/bin/moonraker_firewall > /dev/null
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
